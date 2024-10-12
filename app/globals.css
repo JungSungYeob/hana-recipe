@@ -2,26 +2,110 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  h1 {
+    @apply text-4xl font-extrabold;
+  }
+  h2 {
+    @apply text-3xl font-extrabold;
+  }
+  h3 {
+    @apply text-2xl font-bold;
+  }
+  h4 {
+    @apply text-xl font-bold;
+  }
+  h5 {
+    @apply text-lg font-bold;
+  }
+  body {
+    @apply flex flex-col justify-center items-center;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* L->R white underline animation*/
+  .animate-underline {
+    @apply after:transform-left after:absolute after:left-auto after:right-0 after:block after:w-0 after:transform after:border-b-2 after:border-white after:duration-300 after:ease-out hover:after:left-0 hover:after:right-auto hover:after:w-full;
+  }
+  /* L->R white background animation*/
+  .animate-bg {
+    @apply after:transform-left flex after:absolute after:left-auto after:right-0 after:block after:h-full after:w-0 after:transform after:overflow-hidden after:bg-white after:duration-700 after:ease-out hover:after:left-0 hover:after:right-auto hover:after:w-full;
+  }
+
+  .main-container {
+    @apply flex h-full w-full justify-center rounded-md px-4 pt-20;
+  }
+
+  .btn {
+    @apply border-spacing-1.5 rounded-md border px-2 py-1 uppercase shadow-md transition duration-300 hover:bg-slate-100 hover:text-black focus:ring focus:ring-opacity-75;
+  }
+
+  .root {
+    @apply max-w-7xl w-full text-center;
+  }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  /*animate css*/
+  .transform-left {
+    transform-origin: left;
+  }
+  .transform-right {
+    transform-origin: right;
+  }
+
+  /*404 not found css*/
+  .png-shadow {
+    filter: drop-shadow(
+      5px 5px 5px rgba(255, 255, 255, 0.5)
+    ); /* 투명도를 기준으로 그림자 생성 */
+  }
+
+  /*root setting*/
+  :root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424;
+
+    --font-bmdohyeon: 'BMDOHYEON', sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-bmdohyeon);
+  }
+
+  /* input spin 없애기 */
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox  */
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  /*스크롤바 숨기기*/
+  html,
+  body {
+    overflow: auto;
+    -ms-overflow-style: none; /* IE와 Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* 크롬, 사파리, 엣지 */
+
+  html::-webkit-scrollbar {
+    display: none;
   }
 }
