@@ -5,8 +5,8 @@ import Link from 'next/link';
 export default function Header() {
   return (
     <>
-      <div className='flex justify-center w-full h-16 fixed top-0 left-0 bg-black z-100 px-4 xl:px-0'>
-        <div className='flex items-center justify-between w-full max-w-7xl'>
+      <div className='flex justify-center w-full h-16 fixed top-0 left-0 bg-black z-50 px-4 xl:px-0'>
+        <div className='flex items-center justify-between w-full max-w-7xl relative'>
           <div>
             <div id='pc' className='relative text-2xl font-bold'>
               <Link href={'/'} className='animate-underline hidden md:block'>

@@ -37,6 +37,10 @@
     @apply flex h-full w-full justify-center rounded-md px-4 pt-20;
   }
 
+  .recipe-item {
+    @apply border border-gray-600 rounded-lg p-20 justify-center items-center flex hover:bg-white hover:text-black transition-all duration-200 cursor-pointer;
+  }
+
   .btn {
     @apply border-spacing-1.5 rounded-md border px-2 py-1 uppercase shadow-md transition duration-300 hover:bg-slate-100 hover:text-black focus:ring focus:ring-opacity-75;
   }

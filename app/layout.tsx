@@ -1,3 +1,5 @@
+import Header from '@/components/Header';
+import { SessionProvider } from 'next-auth/react';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
@@ -22,7 +24,10 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${bmdoHyeon.variable} antialiased`}>
-        <div className='root'>{children}</div>
+        <SessionProvider>
+          <Header />
+          <div className='root pt-20 z-0'>{children}</div>
+        </SessionProvider>
       </body>
     </html>
   );
