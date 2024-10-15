@@ -1,5 +1,5 @@
 import Header from '@/components/Header';
-import { RecipeProvider } from '@/context/SessionContext';
+import { RecipeProvider } from '@/context/RecipeSessionContext';
 import { SessionProvider } from 'next-auth/react';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
@@ -23,6 +23,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  console.log('root');
   const session = await auth();
   return (
     <html lang='en'>

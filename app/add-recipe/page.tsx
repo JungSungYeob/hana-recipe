@@ -1,5 +1,6 @@
 'use client';
 
+import { useRecipeSession } from '@/context/RecipeSessionContext';
 import { Recipe, RecipeList } from '@/types/recipeType';
 import { useRouter } from 'next/navigation';
 import { RefObject, useRef, useState } from 'react';
@@ -7,6 +8,7 @@ import { loadLocalStorage, saveLocalStorage } from '@/lib/storage';
 
 export default function AddRecipe() {
   const router = useRouter();
+  const { session, initializeSession } = useRecipeSession();
 
   const [tags, setTags] = useState<string[]>([]);
   const [ingredients, setIngredients] = useState<string[]>([]);
@@ -46,10 +48,9 @@ export default function AddRecipe() {
 
   const saveHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-
+    console.log('saveHandler call');
     const storedData = loadLocalStorage<Recipe[]>('Recipes') || [];
     const storedList = loadLocalStorage<RecipeList[]>('RecipesList') || [];
-
     const newId =
       storedData.length > 0
         ? Math.max(...storedData.map((recipe) => recipe.id)) + 1
@@ -65,19 +66,24 @@ export default function AddRecipe() {
       steps,
       date: new Date(),
     };
-
     const newRecipeList = {
+      email: session.loginUser?.email,
       parentId: newId,
       id: newId,
     };
-
     const updatedRecipes = [...storedData, newRecipe];
     saveLocalStorage('Recipes', updatedRecipes);
 
     const updateRecipesList = [...storedList, newRecipeList];
     saveLocalStorage('RecipesList', updateRecipesList);
 
+    initializeSession()
+
     router.push('/');
+    return () => {
+      // 이 부분은 컴포넌트가 언마운트되거나, 의존성 배열이 변경되기 전에 실행됨
+      console.log('Component Unmounted or Updated');
+    };
   };
   return (
     <>

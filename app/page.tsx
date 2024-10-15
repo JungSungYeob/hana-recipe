@@ -1,32 +1,23 @@
 'use client';
 
-import { Recipe, RecipeList } from '@/types/recipeType';
+import { useRecipeSession } from '@/context/RecipeSessionContext';
+import { Recipe } from '@/types/recipeType';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { loadLocalStorage } from '@/lib/storage';
 
 export default function Home() {
-  const [validList, setValidList] = useState<RecipeList[]>([]);
   const [storedData, setStoredData] = useState<Recipe[]>([]);
 
-  useEffect(() => {
-    const data = loadLocalStorage<Recipe[]>('Recipes');
-    const matchedData = (data ?? []).filter((item) =>
-      validList.some(
-        (listItem) =>
-          listItem.parentId === item.parentId && listItem.id === item.id
-      )
-    );
-    const sortedData = matchedData.sort((a, b) => b.parentId - a.parentId);
-    setStoredData(sortedData);
-  }, [validList]);
+  const { session } = useRecipeSession();
 
   useEffect(() => {
-    const list = loadLocalStorage<RecipeList[]>('RecipesList');
-    if (list) {
-      setValidList(list);
-    }
-  }, []);
+    console.log(session);
+    const valid = session.recipes.filter((item) =>
+      session.list.some((listitem) => listitem.id === item.id)
+    );
+    const sortValid = valid.sort((a, b) => b.parentId - a.parentId);
+    setStoredData(sortValid);
+  }, [session]);
 
   return (
     <>

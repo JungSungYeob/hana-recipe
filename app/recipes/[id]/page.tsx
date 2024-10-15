@@ -20,6 +20,10 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
         setRecipe(result);
       }
     }
+    return () => {
+      // 이 부분은 컴포넌트가 언마운트되거나, 의존성 배열이 변경되기 전에 실행됨
+      console.log('Component Unmounted or Updated');
+    };
   }, []);
 
   useEffect(() => {
@@ -33,6 +37,10 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
         setVerList(result);
       }
     }
+    return () => {
+      // 이 부분은 컴포넌트가 언마운트되거나, 의존성 배열이 변경되기 전에 실행됨
+      console.log('Component Unmounted or Updated');
+    };
   }, [recipe]);
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

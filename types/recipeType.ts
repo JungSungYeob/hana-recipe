@@ -1,14 +1,22 @@
 export type Recipe = {
-	parentId: number;
-	id: number;
-	title: string;
-	tags: string[];
-	ingredients: string[];
-	steps: string[];
-	date: Date;
-}
+  parentId: number;
+  id: number;
+  title: string;
+  tags: string[];
+  ingredients: string[];
+  steps: string[];
+  date: Date;
+};
 
 export type RecipeList = {
-	parentId: number;
-	id: number;
-}
+  email: string;
+  parentId: number;
+  id: number;
+};
+
+export type RecipeInput = {
+  title: string;
+  tags: string[];
+  ingredients: string[];
+  steps: string[];
+};

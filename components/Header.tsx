@@ -4,7 +4,6 @@ import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 
 export default function Header() {
-
   const handleLogout = () =>{
     signOut({callbackUrl:'/'});
   }

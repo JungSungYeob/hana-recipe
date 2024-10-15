@@ -3,6 +3,7 @@ import { auth } from './lib/auth';
 
 export async function middleware(req: NextRequest) {
   const session = await auth();
+  console.log('middleware call auth')
   const didLogin = !!session?.user;
 
   const signinPath = '/api/auth/signin';
