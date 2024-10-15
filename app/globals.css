@@ -45,6 +45,10 @@
     @apply border-spacing-1.5 rounded-md border px-2 py-1 uppercase shadow-md transition duration-300 hover:bg-slate-100 hover:text-black focus:ring focus:ring-opacity-75;
   }
 
+  .inp {
+    @apply bg-white p-4 rounded-md text-black;
+  }
+
   .root {
     @apply max-w-7xl w-full text-center;
   }

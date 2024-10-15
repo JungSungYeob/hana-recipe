@@ -1,33 +1,31 @@
 'use client';
 
+import { useRecipeSession } from '@/context/RecipeSessionContext';
 import { Recipe, RecipeList } from '@/types/recipeType';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { loadLocalStorage, saveLocalStorage } from '@/lib/storage';
-import { useRouter } from 'next/navigation';
 
 export default function RecipeDetail({ params }: { params: { id: number } }) {
-	const router = useRouter();
+  const router = useRouter();
+  const { session, initializeSession } = useRecipeSession();
 
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [verList, setVerList] = useState<Recipe[]>([]);
 
+  const data = session.recipes;
+
   useEffect(() => {
-    const data = loadLocalStorage<Recipe[]>('Recipes');
     if (data) {
       const result = data.find((recipe) => recipe.id === Number(params.id));
       if (result) {
         setRecipe(result);
       }
     }
-    return () => {
-      // 이 부분은 컴포넌트가 언마운트되거나, 의존성 배열이 변경되기 전에 실행됨
-      console.log('Component Unmounted or Updated');
-    };
-  }, []);
+  }, [data]);
 
   useEffect(() => {
-    const data = loadLocalStorage<Recipe[]>('Recipes');
     if (data) {
       const result = data.filter((item) => {
         if (item.parentId === recipe?.parentId && item.id !== recipe?.id)
@@ -37,10 +35,6 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
         setVerList(result);
       }
     }
-    return () => {
-      // 이 부분은 컴포넌트가 언마운트되거나, 의존성 배열이 변경되기 전에 실행됨
-      console.log('Component Unmounted or Updated');
-    };
   }, [recipe]);
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -58,13 +52,36 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
 
     saveLocalStorage('Recipes', updateData);
     saveLocalStorage('RecipesList', updateList);
-		
-		router.push('/')
+
+    initializeSession();
+
+    router.push('/');
+  };
+
+  const handleVersion = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    id: number
+  ) => {
+    e.preventDefault();
+    const storedList = loadLocalStorage<RecipeList[]>('RecipesList') || [];
+
+    const updateRecipesList = storedList.map((item) => {
+      if (item.parentId === recipe?.parentId) {
+        return { ...item, id: id };
+      }
+      return item;
+    });
+
+    saveLocalStorage('RecipesList', updateRecipesList);
+
+    initializeSession();
+
+    router.push('/');
   };
 
   return (
     <>
-      <div className='border text-left p-4'>
+      <div className='border rounded-md text-left p-4'>
         <h1 className='pb-5'>{recipe?.title}</h1>
         <div className='pb-5'>
           <h2>조리 과정</h2>
@@ -80,14 +97,6 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
             ))}
           </ul>
         </div>
-        <div className='inline-flex gap-2 pb-5'>
-          {recipe?.tags.map((item, index) => (
-            <small
-              key={index}
-              className='bg-gray-500 p-2 rounded-md'
-            >{`#${item}`}</small>
-          ))}
-        </div>
         <div className='pb-5'>
           <h3>재료</h3>
           <ul className='ml-5 list-disc'>
@@ -99,14 +108,31 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
         <div>
           <h3>수정 기록</h3>
           <ul>
-            {verList.map((item, index) => (
-              <li key={item.id} className='p-2'>
-                <strong>{`버젼 ${index + 1}`}</strong>
-                <small className='ml-2'>{`(수정일: ${item.date.toLocaleString()} )`}</small>
-                <button className='btn ml-2'>이 버전으로 복원</button>
-              </li>
-            ))}
+            {verList.length < 1 ? (
+              <p className='ml-5'>이전 버젼이 존재하지 않습니다.</p>
+            ) : (
+              verList.map((item, index) => (
+                <li key={item.id} className='p-2'>
+                  <strong>{`버젼 ${index + 1}`}</strong>
+                  <small className='ml-2'>{`(수정일: ${item.date.toLocaleString()} )`}</small>
+                  <button
+                    onClick={(e) => handleVersion(e, item.id)}
+                    className='btn ml-2'
+                  >
+                    이 버전으로 복원
+                  </button>
+                </li>
+              ))
+            )}
           </ul>
+          <div className='inline-flex gap-2 pb-5'>
+          {recipe?.tags.map((item, index) => (
+            <small
+              key={index}
+              className='bg-gray-500 p-2 rounded-md'
+            >{`#${item}`}</small>
+          ))}
+        </div>
         </div>
         <div className='flex gap-4'>
           <Link href={`/edit-recipe/${params.id}`}>

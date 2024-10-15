@@ -70,9 +70,7 @@ export const RecipeProvider = ({ children }: PropsWithChildren) => {
   const { data: sessionData } = useSession();
 
   useEffect(() => {
-    if (sessionData) {
-      initializeSession(); // 로그인 또는 세션 정보가 있을 때만 호출
-    }
+    initializeSession();
   }, []);
 
   const initializeSession = () => {

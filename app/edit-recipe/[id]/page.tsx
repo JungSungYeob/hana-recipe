@@ -4,32 +4,28 @@ import { Recipe, RecipeList } from '@/types/recipeType';
 import { useRouter } from 'next/navigation';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { loadLocalStorage, saveLocalStorage } from '@/lib/storage';
+import { useRecipeSession } from '@/context/RecipeSessionContext';
 
 export default function EditRecipe({ params }: { params: { id: number } }) {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
+
+  const {session, initializeSession} = useRecipeSession();
+
+  const data = session.recipes;
   useEffect(() => {
-    const data = loadLocalStorage<Recipe[]>('Recipes');
     if (data) {
       const result = data.find((recipe) => recipe.id === Number(params.id));
       if (result) {
         setRecipe(result);
       }
     }
-    return () => {
-      // 이 부분은 컴포넌트가 언마운트되거나, 의존성 배열이 변경되기 전에 실행됨
-      console.log('Component Unmounted or Updated');
-    };
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     setTitle(recipe?.title ?? '');
     setTags(recipe?.tags ?? []);
     setIngredients(recipe?.ingredients ?? []);
     setSteps(recipe?.steps ?? []);
-    return () => {
-      // 이 부분은 컴포넌트가 언마운트되거나, 의존성 배열이 변경되기 전에 실행됨
-      console.log('Component Unmounted or Updated');
-    };
   }, [recipe]);
 
   const router = useRouter();
@@ -103,6 +99,8 @@ export default function EditRecipe({ params }: { params: { id: number } }) {
       return item;
     });
     saveLocalStorage('RecipesList', updateRecipesList);
+
+    initializeSession();
 
     router.push('/');
   };
