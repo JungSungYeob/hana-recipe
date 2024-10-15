@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
 import { useState, useEffect } from 'react';
 
-const Timer = () => {
+export default function Timer() {
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [remainingTime, setRemainingTime] = useState(0);
@@ -16,7 +16,7 @@ const Timer = () => {
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    
+
     if (isRunning) {
       const endTime = Date.now() + seconds * 1000; // 종료 시간 계산
       timer = setInterval(() => {
@@ -32,9 +32,8 @@ const Timer = () => {
           setRemainingTime(timeLeft); // 남은 시간 업데이트
         }
       }, 50); // 밀리초 단위로 업데이트
-
     }
-    
+
     return () => {
       // 타이머 해제
       clearInterval(timer);
@@ -47,6 +46,9 @@ const Timer = () => {
 
   const handleStop = () => {
     setIsRunning(false);
+    if (alarmSound) {
+      alarmSound.pause();
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,22 +56,30 @@ const Timer = () => {
   };
 
   return (
-    <div>
-      <h1>Timer</h1>
+    <div className='border rounded-md p-4 w-fit'>
       <input
-        type="number"
+      className='rounded-md px-2 py-1 max-w-32 w-full'
+        type='number'
         onChange={handleChange}
-        placeholder="Seconds"
+        placeholder='Seconds'
+        disabled={isRunning}
       />
-      <button className='btn' onClick={handleStart} disabled={isRunning}>
+      <button
+        className='btn text-sm'
+        onClick={handleStart}
+        disabled={isRunning}
+      >
         Start Timer
       </button>
-      <button className='btn' onClick={handleStop} disabled={!isRunning}>
+      <button
+        className='btn bg-red-600 hover:bg-red-900 hover:text-white text-sm'
+        onClick={handleStop}
+      >
         Stop Timer
       </button>
-      <p>Remaining Time: {remainingTime.toFixed(0)} ms</p>
+      <p>
+        {Math.floor(remainingTime / 1000)}s {Math.floor(remainingTime % 1000)}ms
+      </p>
     </div>
   );
-};
-
-export default Timer;
+}

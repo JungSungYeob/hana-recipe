@@ -1,11 +1,31 @@
 'use client';
 
+import Timer from '@/components/Timer';
 import { useRecipeSession } from '@/context/RecipeSessionContext';
 import { Recipe, RecipeList } from '@/types/recipeType';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { loadLocalStorage, saveLocalStorage } from '@/lib/storage';
+import { format } from 'path';
+
+function formatDate(date: Date) {
+  const year = date.getFullYear(); // 년도
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1)
+  const day = String(date.getDate()).padStart(2, '0'); // 일
+  let hours = date.getHours(); // 시
+  const minutes = String(date.getMinutes()).padStart(2, '0'); // 분
+  const seconds = String(date.getSeconds()).padStart(2, '0'); // 초
+
+  // 오전/오후 결정
+  const ampm = hours >= 12 ? '오후' : '오전';
+
+  // 12시간제로 변경
+  hours = hours % 12;
+  hours = hours ? hours : 12; // 0시를 12시로 변경
+
+  return `${year}. ${month}. ${day}. ${ampm} ${String(hours).padStart(2, '0')}:${minutes}:${seconds}`;
+}
 
 export default function RecipeDetail({ params }: { params: { id: number } }) {
   const router = useRouter();
@@ -54,7 +74,7 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
 
     initializeSession();
 
-    router.push('/');
+    router.replace('/');
   };
 
   const handleVersion = (
@@ -75,7 +95,7 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
 
     initializeSession();
 
-    router.push(`/recipes/${id}`);
+    router.replace(`/recipes/${id}`);
   };
 
   return (
@@ -97,8 +117,7 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
               <li key={index} className='flex flex-col'>
                 {`Step ${index + 1}: ${item}`}
                 <div className=''>
-                  <input className='inp' type='number' placeholder='시간(초)' />
-                  <button className='btn'>타이머 시작</button>
+                  <Timer />
                 </div>
               </li>
             ))}
@@ -108,7 +127,7 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
         <div>
           <h3>수정 기록</h3>
           <ul>
-            {verList.length < 1 ? (
+            {verList.length < 2 ? (
               <p className='ml-5'>이전 버젼이 존재하지 않습니다.</p>
             ) : (
               verList.map((item, index) => {
@@ -116,7 +135,7 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
                   return (
                     <li key={item.id} className='p-2'>
                       <strong>{`버젼 ${index + 1}`}</strong>
-                      <small className='ml-2'>{`(수정일: ${item.date.toLocaleString()} )`}</small>
+                      <small className='ml-2'>{`(수정일: ${formatDate(new Date(item.date))} )`}</small>
                       <button
                         onClick={(e) => handleVersion(e, item.id)}
                         className='btn ml-2'
