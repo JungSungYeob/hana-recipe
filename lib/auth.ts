@@ -26,7 +26,7 @@ export const {
 
         console.log('🚀  credentials:', credentials);
         const { email } = credentials;
-        const user = { id: '1', email, name: 'Hong' } as User;
+        const user = { email, name: 'TmpUser' } as User;
         return user;
       },
     }),

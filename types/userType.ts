@@ -1,9 +1,8 @@
 import { Recipe, RecipeList } from "./recipeType";
 
 export type LoginUser = {
-  id: number;
   email: string;
-  name: string | null;
+  name: string;
   image: string | null;
 };
 

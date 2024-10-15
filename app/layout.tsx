@@ -1,4 +1,5 @@
 import Header from '@/components/Header';
+import { RecipeProvider } from '@/context/SessionContext';
 import { SessionProvider } from 'next-auth/react';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
@@ -27,8 +28,10 @@ export default async function RootLayout({
     <html lang='en'>
       <body className={`${bmdoHyeon.variable} antialiased`}>
         <SessionProvider session={session}>
-          <Header />
-          <main className='root pt-20 z-0 relative px-4'>{children}</main>
+          <RecipeProvider>
+            <Header />
+            <main className='root pt-20 z-0 relative px-4'>{children}</main>
+          </RecipeProvider>
         </SessionProvider>
       </body>
     </html>

@@ -1,5 +1,8 @@
+'use client';
+
 import { Recipe, RecipeList } from '@/types/recipeType';
 import { LoginUser, Session } from '@/types/userType';
+import { useSession } from 'next-auth/react';
 import {
   createContext,
   PropsWithChildren,
@@ -7,9 +10,12 @@ import {
   useLayoutEffect,
   useReducer,
 } from 'react';
-import { auth } from '@/lib/auth';
+import {
+  saveUserToLocalStorage,
 
-const USERKEY = 'users';
+} from '@/lib/storage';
+
+// const USERKEY = 'users';
 
 const InitSession: Session = {
   loginUser: null,
@@ -19,13 +25,13 @@ const InitSession: Session = {
 
 const contextInitValue = {
   session: InitSession,
-  getRecipe: (session: Session) => console.log(session.loginUser?.id),
-  getList: (id: number) => console.log(id),
-  addRecipe: (id: number) => console.log(id),
-  editRecipe: (id: number) => console.log(id),
-  deleteRecipe: (id: number) => console.log(id),
-  editList: (id: number) => console.log(id),
-  deleteList: (id: number) => console.log(id),
+  getRecipe: (id: number) => console.log(id),
+  // getList: (id: number) => console.log(id),
+  // addRecipe: (id: number) => console.log(id),
+  // editRecipe: (id: number) => console.log(id),
+  // deleteRecipe: (id: number) => console.log(id),
+  // editList: (id: number) => console.log(id),
+  // deleteList: (id: number) => console.log(id),
 };
 
 type SessionContextProps = Omit<typeof contextInitValue, 'session'> & {
@@ -33,8 +39,8 @@ type SessionContextProps = Omit<typeof contextInitValue, 'session'> & {
 };
 
 type Action =
-  | { type: 'initialize'; payload: Session }
-  | { type: 'getRecipe'; payload: Recipe[] }
+  | { type: 'initialize'; payload: LoginUser }
+  | { type: 'getRecipe'; payload: number }
   | { type: 'getList'; payload: RecipeList[] }
   | { type: 'addRecipe'; payload: Recipe }
   | { type: 'editRecipe'; payload: Recipe }
@@ -46,49 +52,57 @@ const reducer = (session: Session, { type, payload }: Action) => {
   let sess: Session;
   switch (type) {
     case 'initialize': {
-      sess= {
+      sess = {
         ...session,
-        ...payload,
+        loginUser: payload,
       };
-			break;
+      break;
     }
-		default:
-			return session;
+    case 'getRecipe': {
+      return session;
+    }
+    default:
+      return session;
   }
 
-	if(sess){
-		
-	}
-
-	return sess;
+  if (sess.loginUser) {
+    saveUserToLocalStorage(sess.loginUser);
+  }
+  console.log(sess);
+  return sess;
 };
 
 const SessionContext = createContext<SessionContextProps>(contextInitValue);
 
-const SessionProvider = ({ children }: PropsWithChildren) => {
+export const RecipeProvider = ({ children }: PropsWithChildren) => {
   const [session, dispatch] = useReducer(reducer, InitSession);
+  const { data: sessionData } = useSession();
   useLayoutEffect(() => {
     const getUser = async () => {
-      const sessionData = await auth();
       if (sessionData) {
-        const newSession: Session = {
-          loginUser: {
-            id: 1,
-            email: sessionData.user?.email || '',
-            name: sessionData.user?.name || null,
-            image: sessionData.user?.image || null,
-          },
-          recipes: [],
-          list: [],
+        const newSession: LoginUser = {
+          email: sessionData.user?.email || '',
+          name: sessionData.user?.name || '',
+          image: sessionData.user?.image || null,
         };
         dispatch({
           type: 'initialize',
-          payload: newSession,
+          payload: {...newSession},
         });
       }
     };
+    console.log(sessionData);
     getUser();
-  });
+  }, [sessionData]);
+  const getRecipe = (id: number) => {
+    dispatch({ type: 'getRecipe', payload: id });
+  };
+
+  return (
+    <SessionContext.Provider value={{ session, getRecipe }}>
+      {children}
+    </SessionContext.Provider>
+  );
 };
 
-export const useSession = () => useContext(SessionContext);
+export const useRecipeSession = () => useContext(SessionContext);
