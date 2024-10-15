@@ -1,8 +1,14 @@
 'use client';
 
+import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 
 export default function Header() {
+
+  const handleLogout = () =>{
+    signOut({callbackUrl:'/'});
+  }
+
   return (
     <>
       <div className='flex justify-center w-full h-16 fixed top-0 left-0 bg-black z-50 px-4 xl:px-0'>
@@ -24,9 +30,9 @@ export default function Header() {
               </Link>
             </span>
             <span className='relative'>
-              <Link href={'/'} className='animate-underline'>
-                로그아웃
-              </Link>
+              <button onClick={handleLogout}>
+                <p className='animate-underline'>로그아웃</p>
+              </button>
             </span>
           </div>
         </div>

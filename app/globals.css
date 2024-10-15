@@ -38,7 +38,7 @@
   }
 
   .recipe-item {
-    @apply border border-gray-600 rounded-lg p-20 justify-center items-center flex hover:bg-white hover:text-black transition-all duration-200 cursor-pointer;
+    @apply border p-2 border-gray-600 rounded-lg justify-center flex hover:bg-white hover:text-black transition-all duration-200 cursor-pointer h-52;
   }
 
   .btn {
