@@ -112,10 +112,10 @@ export default function AddRecipe() {
         </form>
         <ul className='list-disc ml-5'>
           {ingredients.map((item, index) => (
-            <li key={index} className='flex flex-row'>
+            <li key={index} className=''>
               {item}
               <button
-                onClick={(e) => deleteHandler(e, index, tags, setTags)}
+                onClick={(e) => deleteHandler(e, index, ingredients, setIngredients)}
                 className='btn'
               >
                 x
@@ -139,7 +139,7 @@ export default function AddRecipe() {
             <li key={index} className='flex flex-row'>
               {`Step ${index + 1}: ${item}`}
               <button
-                onClick={(e) => deleteHandler(e, index, tags, setTags)}
+                onClick={(e) => deleteHandler(e, index, steps, setSteps)}
                 className='btn'
               >
                 X

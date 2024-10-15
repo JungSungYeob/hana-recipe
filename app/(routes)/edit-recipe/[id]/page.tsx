@@ -1,15 +1,15 @@
 'use client';
 
+import { useRecipeSession } from '@/context/RecipeSessionContext';
 import { Recipe, RecipeList } from '@/types/recipeType';
 import { useRouter } from 'next/navigation';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { loadLocalStorage, saveLocalStorage } from '@/lib/storage';
-import { useRecipeSession } from '@/context/RecipeSessionContext';
 
 export default function EditRecipe({ params }: { params: { id: number } }) {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
 
-  const {session, initializeSession} = useRecipeSession();
+  const { session, initializeSession } = useRecipeSession();
 
   const data = session.recipes;
   useEffect(() => {
@@ -67,6 +67,17 @@ export default function EditRecipe({ params }: { params: { id: number } }) {
     }
   };
 
+  const deleteHandler = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    index: number,
+    state: string[],
+    setState: React.Dispatch<React.SetStateAction<string[]>>
+  ) => {
+    e.preventDefault();
+    const newState = state.filter((_, i) => i !== index);
+    setState(newState);
+  };
+
   const saveHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
@@ -106,55 +117,90 @@ export default function EditRecipe({ params }: { params: { id: number } }) {
   };
   return (
     <>
-      <div className='flex flex-col'>
-        <label>레시피 제목</label>
+      <div className='border rounded-md text-left p-4'>
+        <h1>레시피 제목</h1>
         <input
+          className='pb-5 inp'
           ref={titleRef}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
         <form
-          ref={tagFormRef}
-          onSubmit={(e) => addHandler(e, tagFormRef, tagRef, setTags)}
-        >
-          <label>태그</label>
-          <input ref={tagRef} />
-          <button type='submit'>추가</button>
-        </form>
-        <ul>
-          {tags.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
-        <form
+          className='pb-5'
           ref={ingredientFormRef}
           onSubmit={(e) =>
             addHandler(e, ingredientFormRef, ingredientRef, setIngredients)
           }
         >
-          <label>재료 목록</label>
-          <input ref={ingredientRef} />
-          <button type='submit'>추가</button>
+          <h3>재료 목록</h3>
+          <input className='inp' ref={ingredientRef} />
+          <button className='btn' type='submit'>
+            추가
+          </button>
         </form>
-        <ul>
+        <ul className='list-disc ml-5'>
           {ingredients.map((item, index) => (
-            <li key={index}>{item}</li>
+            <li key={index} className=''>
+              {item}
+              <button
+                onClick={(e) => deleteHandler(e, index, ingredients, setIngredients)}
+                className='btn'
+              >
+                x
+              </button>
+            </li>
           ))}
         </ul>
         <form
+          className='pb-5'
           ref={stepFormRef}
           onSubmit={(e) => addHandler(e, stepFormRef, stepRef, setSteps)}
         >
-          <label>조리 과정</label>
-          <input ref={stepRef} />
-          <button type='submit'>추가</button>
+          <h3>조리 과정</h3>
+          <input className='inp' ref={stepRef} />
+          <button className='btn' type='submit'>
+            추가
+          </button>
         </form>
-        <ul>
+        <ul className='ml-5'>
           {steps.map((item, index) => (
-            <li key={index}>{item}</li>
+            <li key={index} className='flex flex-row'>
+              {`Step ${index + 1}: ${item}`}
+              <button
+                onClick={(e) => deleteHandler(e, index, steps, setSteps)}
+                className='btn'
+              >
+                X
+              </button>
+            </li>
           ))}
         </ul>
-        <button onClick={saveHandler}>레시피 수정</button>
+        <form
+          className='pb-5'
+          ref={tagFormRef}
+          onSubmit={(e) => addHandler(e, tagFormRef, tagRef, setTags)}
+        >
+          <h3>태그</h3>
+          <input className='inp' ref={tagRef} />
+          <button className='btn' type='submit'>
+            추가
+          </button>
+        </form>
+        <div className='inline-flex gap-2 mb-5'>
+          {tags.map((item, index) => (
+            <div key={index}>
+              <small className='bg-gray-500 p-2 rounded-md'>{item}</small>
+              <button onClick={(e) => deleteHandler(e, index, tags, setTags)}>
+                X
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className='w-full flex justify-center items-center'>
+          <button className='btn' onClick={saveHandler}>
+            레시피 추가
+          </button>
+        </div>
       </div>
     </>
   );
