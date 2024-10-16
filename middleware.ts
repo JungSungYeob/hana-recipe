@@ -6,8 +6,7 @@ export async function middleware(req: NextRequest) {
   console.log('middleware call auth');
   const didLogin = !!session?.user;
 
-  const signinPath = '/api/auth/signin';
-
+  const signinPath = '/login';
 
   if (didLogin && req.nextUrl.pathname === signinPath) {
     return NextResponse.redirect(new URL('/', req.url));
@@ -15,12 +14,12 @@ export async function middleware(req: NextRequest) {
   if (!didLogin && req.nextUrl.pathname !== signinPath) {
     const callbackUrl = encodeURIComponent(req.nextUrl.pathname);
     return NextResponse.redirect(
-      new URL(`/api/auth/signin?callbackUrl=${callbackUrl}`, req.url)
+      new URL(`/login?callbackUrl=${callbackUrl}`, req.url)
     );
   }
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/((?!api/auth/).*)', '/api/auth/signin'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|robots.txt|images|api/auth|login|regist|$).*)', '/login'],
 };

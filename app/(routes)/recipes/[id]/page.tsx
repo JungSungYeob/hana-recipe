@@ -80,6 +80,7 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
     initializeSession();
     router.replace(`/recipes/${id}`);
   };
+  
   if (!valid) {
     return (
       <div className='flex flex-col space-y-3'>

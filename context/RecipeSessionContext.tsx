@@ -24,7 +24,8 @@ const InitSession: Session = {
 const contextInitValue = {
   session: InitSession,
   initializeSession: () => {},
-  isValid: (id:number) => false,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isValid: (id: number) => false,
 };
 
 type SessionContextProps = Omit<typeof contextInitValue, 'session'> & {
@@ -70,7 +71,7 @@ const RecipeSessionContext =
 export const RecipeProvider = ({ children }: PropsWithChildren) => {
   const [session, dispatch] = useReducer(reducer, InitSession);
   const { data: sessionData } = useSession();
-  const [sessionLoaded, setSessionLoaded] = useState(false)
+  const [sessionLoaded, setSessionLoaded] = useState(false);
 
   useEffect(() => {
     initializeSession();
@@ -104,9 +105,10 @@ export const RecipeProvider = ({ children }: PropsWithChildren) => {
     return false;
   };
 
-
   return (
-    <RecipeSessionContext.Provider value={{ session, initializeSession, isValid }}>
+    <RecipeSessionContext.Provider
+      value={{ session, initializeSession, isValid }}
+    >
       {children}
     </RecipeSessionContext.Provider>
   );

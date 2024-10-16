@@ -3,6 +3,10 @@
 import { AuthError } from 'next-auth';
 import { signIn, signOut } from './auth';
 
+export async function logIn(provider: 'google' | 'github') {
+  await signIn(provider, { redirectTo: '/' });
+}
+
 export async function logout() {
   console.log('logout!!');
   await signOut();

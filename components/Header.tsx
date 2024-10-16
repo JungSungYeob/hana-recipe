@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function Header() {
   const handleLogout = () =>{
-    signOut({callbackUrl:'/'});
+    signOut({callbackUrl:'/login'});
   }
 
   return (
