@@ -9,6 +9,7 @@ import {
   useContext,
   useEffect,
   useReducer,
+  useState,
 } from 'react';
 import { loadLocalStorage, saveUserToLocalStorage } from '@/lib/storage';
 
@@ -22,7 +23,8 @@ const InitSession: Session = {
 
 const contextInitValue = {
   session: InitSession,
-  initializeSession: () => console.log(),
+  initializeSession: () => {},
+  isValid: (id:number) => false,
 };
 
 type SessionContextProps = Omit<typeof contextInitValue, 'session'> & {
@@ -68,10 +70,22 @@ const RecipeSessionContext =
 export const RecipeProvider = ({ children }: PropsWithChildren) => {
   const [session, dispatch] = useReducer(reducer, InitSession);
   const { data: sessionData } = useSession();
+  const [sessionLoaded, setSessionLoaded] = useState(false)
 
   useEffect(() => {
     initializeSession();
-  }, []);
+  }, [sessionLoaded]);
+
+  //useSession이 최종적으로 이루어졌는지 확인
+  useEffect(() => {
+    if (session) {
+      const timeoutId = setTimeout(() => {
+        setSessionLoaded(true);
+      }, 500);
+
+      return () => clearTimeout(timeoutId); // session 변경 중 타이머를 초기화
+    }
+  }, [session]);
 
   const initializeSession = () => {
     if (sessionData) {
@@ -83,9 +97,16 @@ export const RecipeProvider = ({ children }: PropsWithChildren) => {
       dispatch({ type: 'initializeSession', payload: newSession });
     }
   };
+  const isValid = (id: number) => {
+    if (session.list.some((item) => item.id === id)) {
+      return true;
+    }
+    return false;
+  };
+
 
   return (
-    <RecipeSessionContext.Provider value={{ session, initializeSession }}>
+    <RecipeSessionContext.Provider value={{ session, initializeSession, isValid }}>
       {children}
     </RecipeSessionContext.Provider>
   );

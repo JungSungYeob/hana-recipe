@@ -5,8 +5,9 @@ import { Recipe, RecipeList } from '@/types/recipeType';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
 import { TbXboxXFilled } from 'react-icons/tb';
 import { useRouter } from 'next/navigation';
-import { RefObject, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { loadLocalStorage, saveLocalStorage } from '@/lib/storage';
+import { addHandler, deleteHandler } from '@/lib/formLib';
 
 export default function AddRecipe() {
   const router = useRouter();
@@ -24,40 +25,6 @@ export default function AddRecipe() {
   const tagFormRef = useRef<HTMLFormElement>(null);
   const ingredientFormRef = useRef<HTMLFormElement>(null);
   const stepFormRef = useRef<HTMLFormElement>(null);
-
-  const resetHandler = (formRef: RefObject<HTMLFormElement>) => {
-    if (formRef.current) {
-      formRef.current.reset();
-    }
-  };
-
-  const addHandler = (
-    e: React.FormEvent,
-    formRef: RefObject<HTMLFormElement>,
-    inputRef: React.RefObject<HTMLInputElement>,
-    setState: React.Dispatch<React.SetStateAction<string[]>>
-  ) => {
-    e.preventDefault();
-
-    const data = inputRef.current?.value;
-
-    if (data) {
-      setState((prevState) => [...prevState, data]);
-      resetHandler(formRef);
-      inputRef.current.focus();
-    }
-  };
-
-  const deleteHandler = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    index: number,
-    state: string[],
-    setState: React.Dispatch<React.SetStateAction<string[]>>
-  ) => {
-    e.preventDefault();
-    const newState = state.filter((_, i) => i !== index);
-    setState(newState);
-  };
 
   const saveHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();

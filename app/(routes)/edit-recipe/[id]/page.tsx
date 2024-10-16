@@ -5,7 +5,8 @@ import { Recipe, RecipeList } from '@/types/recipeType';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
 import { TbXboxXFilled } from 'react-icons/tb';
 import { useRouter } from 'next/navigation';
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { addHandler, deleteHandler } from '@/lib/formLib';
 import { loadLocalStorage, saveLocalStorage } from '@/lib/storage';
 
 export default function EditRecipe({ params }: { params: { id: number } }) {
@@ -21,7 +22,7 @@ export default function EditRecipe({ params }: { params: { id: number } }) {
         setRecipe(result);
       }
     }
-  }, [data]);
+  }, [data, params.id]);
 
   useEffect(() => {
     setTitle(recipe?.title ?? '');
@@ -45,40 +46,6 @@ export default function EditRecipe({ params }: { params: { id: number } }) {
   const tagFormRef = useRef<HTMLFormElement>(null);
   const ingredientFormRef = useRef<HTMLFormElement>(null);
   const stepFormRef = useRef<HTMLFormElement>(null);
-
-  const resetHandler = (formRef: RefObject<HTMLFormElement>) => {
-    if (formRef.current) {
-      formRef.current.reset();
-    }
-  };
-
-  const addHandler = (
-    e: React.FormEvent,
-    formRef: RefObject<HTMLFormElement>,
-    inputRef: React.RefObject<HTMLInputElement>,
-    setState: React.Dispatch<React.SetStateAction<string[]>>
-  ) => {
-    e.preventDefault();
-
-    const data = inputRef.current?.value;
-
-    if (data) {
-      setState((prevState) => [...prevState, data]);
-      resetHandler(formRef);
-      inputRef.current.focus();
-    }
-  };
-
-  const deleteHandler = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    index: number,
-    state: string[],
-    setState: React.Dispatch<React.SetStateAction<string[]>>
-  ) => {
-    e.preventDefault();
-    const newState = state.filter((_, i) => i !== index);
-    setState(newState);
-  };
 
   const saveHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -151,7 +118,7 @@ export default function EditRecipe({ params }: { params: { id: number } }) {
                   }
                   className='ml-1'
                 >
-                  <RiDeleteBin5Fill color='red' size={25}/>
+                  <RiDeleteBin5Fill color='red' size={25} />
                 </button>
               </div>
             </li>
@@ -176,7 +143,7 @@ export default function EditRecipe({ params }: { params: { id: number } }) {
                 onClick={(e) => deleteHandler(e, index, steps, setSteps)}
                 className=' ml-1'
               >
-                <RiDeleteBin5Fill color='red' size={25}/>
+                <RiDeleteBin5Fill color='red' size={25} />
               </button>
             </li>
           ))}

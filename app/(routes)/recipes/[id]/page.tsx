@@ -1,50 +1,56 @@
 'use client';
 
 import Timer from '@/components/Timer';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useRecipeSession } from '@/context/RecipeSessionContext';
-import { Recipe, RecipeList } from '@/types/recipeType';
+import { Recipe } from '@/types/recipeType';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { loadLocalStorage, saveLocalStorage } from '@/lib/storage';
-import { format } from 'path';
-
-function formatDate(date: Date) {
-  const year = date.getFullYear(); // 년도
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1)
-  const day = String(date.getDate()).padStart(2, '0'); // 일
-  let hours = date.getHours(); // 시
-  const minutes = String(date.getMinutes()).padStart(2, '0'); // 분
-  const seconds = String(date.getSeconds()).padStart(2, '0'); // 초
-
-  // 오전/오후 결정
-  const ampm = hours >= 12 ? '오후' : '오전';
-
-  // 12시간제로 변경
-  hours = hours % 12;
-  hours = hours ? hours : 12; // 0시를 12시로 변경
-
-  return `${year}. ${month}. ${day}. ${ampm} ${String(hours).padStart(2, '0')}:${minutes}:${seconds}`;
-}
+import { deleteData, updateVersion } from '@/lib/storage';
 
 export default function RecipeDetail({ params }: { params: { id: number } }) {
   const router = useRouter();
-  const { session, initializeSession } = useRecipeSession();
+  const { session, initializeSession, isValid } = useRecipeSession();
 
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [verList, setVerList] = useState<Recipe[]>([]);
 
   const data = session.recipes;
+  const [valid, setValid] = useState(false);
 
+  /**내가 만든 session.recipes에 있는 id 중 params.id와 같은 것이 있으면 불러오기*/
   useEffect(() => {
     if (data) {
+      setValid(isValid(Number(params.id)));
+    }
+  }, [data, isValid, params.id]);
+
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    if (!valid) {
+      timeoutId = setTimeout(() => {
+        alert('해당 레시피에 접근 권한이 없습니다.');
+        router.replace('/');
+      }, 500);
+    }
+
+    // clean-up
+    return () => clearTimeout(timeoutId);
+  }, [valid, router]);
+
+  useEffect(() => {
+    console.log(valid);
+    if (valid) {
       const result = data.find((recipe) => recipe.id === Number(params.id));
       if (result) {
         setRecipe(result);
       }
     }
-  }, [data]);
+  }, [valid, data, params.id]);
 
+  /**parentID 같은 History 가져오기*/
   useEffect(() => {
     if (data) {
       const result = data.filter((item) => {
@@ -54,49 +60,37 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
         setVerList(result);
       }
     }
-  }, [recipe]);
+  }, [recipe, data]);
 
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-
-    const storedData = loadLocalStorage<Recipe[]>('Recipes') || [];
-    const storedList = loadLocalStorage<RecipeList[]>('RecipesList') || [];
-
-    const updateData = storedData.filter(
-      (item) => item.parentId !== recipe?.parentId
-    );
-    const updateList = storedList.filter(
-      (item) => item.parentId !== recipe?.parentId
-    );
-
-    saveLocalStorage('Recipes', updateData);
-    saveLocalStorage('RecipesList', updateList);
-
+  const handleDelete = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    recipe: Recipe | null
+  ) => {
+    deleteData(e, recipe);
     initializeSession();
-
     router.replace('/');
   };
 
   const handleVersion = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    id: number
+    id: number,
+    recipe: Recipe | null
   ) => {
-    e.preventDefault();
-    const storedList = loadLocalStorage<RecipeList[]>('RecipesList') || [];
-
-    const updateRecipesList = storedList.map((item) => {
-      if (item.parentId === recipe?.parentId) {
-        return { ...item, id: id };
-      }
-      return item;
-    });
-
-    saveLocalStorage('RecipesList', updateRecipesList);
-
+    updateVersion(e, id, recipe);
     initializeSession();
-
     router.replace(`/recipes/${id}`);
   };
+  if (!valid) {
+    return (
+      <div className='flex flex-col space-y-3'>
+        <Skeleton className='h-[125px] w-[250px] rounded-xl' />
+        <div className='space-y-2'>
+          <Skeleton className='h-4 w-[250px]' />
+          <Skeleton className='h-4 w-[200px]' />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -137,7 +131,7 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
                       <strong>{`버젼 ${index + 1}`}</strong>
                       <small className='ml-2'>{`(수정일: ${formatDate(new Date(item.date))} )`}</small>
                       <button
-                        onClick={(e) => handleVersion(e, item.id)}
+                        onClick={(e) => handleVersion(e, item.id, recipe)}
                         className='btn ml-2'
                       >
                         이 버전으로 복원
@@ -162,7 +156,7 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
           </Link>
           <button
             className='btn bg-red-600 hover:bg-red-700 hover:text-white'
-            onClick={handleDelete}
+            onClick={(e) => handleDelete(e, recipe)}
           >
             삭제
           </button>
@@ -173,4 +167,22 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
       </div>
     </>
   );
+}
+
+function formatDate(date: Date) {
+  const year = date.getFullYear(); // 년도
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1)
+  const day = String(date.getDate()).padStart(2, '0'); // 일
+  let hours = date.getHours(); // 시
+  const minutes = String(date.getMinutes()).padStart(2, '0'); // 분
+  const seconds = String(date.getSeconds()).padStart(2, '0'); // 초
+
+  // 오전/오후 결정
+  const ampm = hours >= 12 ? '오후' : '오전';
+
+  // 12시간제로 변경
+  hours = hours % 12;
+  hours = hours ? hours : 12; // 0시를 12시로 변경
+
+  return `${year}. ${month}. ${day}. ${ampm} ${String(hours).padStart(2, '0')}:${minutes}:${seconds}`;
 }

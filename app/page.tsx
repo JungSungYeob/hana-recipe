@@ -4,6 +4,8 @@ import { useRecipeSession } from '@/context/RecipeSessionContext';
 import { Recipe } from '@/types/recipeType';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { Skeleton } from "@/components/ui/skeleton"
+
 
 export default function Home() {
   const [storedData, setStoredData] = useState<Recipe[]>([]);
