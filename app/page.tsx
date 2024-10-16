@@ -70,7 +70,7 @@ export default function Home() {
       </div>
     );
   } else if (storedData.length < 1) {
-    return <>데이터 없음</>;
+    return <h1 className='mt-20'>레시피가 아직 추가되지 않았어요.</h1>;
   }
 
   return (

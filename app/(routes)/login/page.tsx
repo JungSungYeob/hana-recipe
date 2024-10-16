@@ -23,7 +23,7 @@ export default function Login() {
           <AuthInput
             name='email'
             label='Email'
-            type='text'
+            type='email'
             classNames=''
             ref={EmailRef}
           >
