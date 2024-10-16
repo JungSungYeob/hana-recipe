@@ -8,11 +8,13 @@ export type AuthInputProps = {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   classNames?: string;
   inputAttrs?: InputHTMLAttributes<HTMLInputElement>;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  value?:string;
 };
 
 const AuthInput = (
   {
+    value,
     name,
     label,
     type,
@@ -29,6 +31,7 @@ const AuthInput = (
       <div className='input-box'>
         <span className='input-icon'>{children}</span>
         <input
+          value={value}
           name={name}
           id={id}
           type={type}

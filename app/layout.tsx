@@ -27,11 +27,11 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang='en'>
-      <body className={`${bmdoHyeon.variable} antialiased`}>
+      <body className={`${bmdoHyeon.variable} antialiased h-screen`}>
         <SessionProvider session={session}>
           <RecipeProvider>
             <Header />
-            <main className='root pt-20 z-0 relative px-4'>{children}</main>
+            <main className='root pt-20 z-0 relative px-4 h-full'>{children}</main>
           </RecipeProvider>
         </SessionProvider>
       </body>

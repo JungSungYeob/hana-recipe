@@ -102,6 +102,10 @@
     @apply max-w-7xl w-full text-center;
   }
 
+  .hover-floating{
+    @apply hover:border hover:p-4 p-2 hover:bg-neutral-500 hover:bg-opacity-50 transition-all duration-700 rounded-xl ease-out
+  }
+
   .input-box {
     @apply relative mt-8 h-12 w-1/2 min-w-96 border-b-2 border-b-white;
   }

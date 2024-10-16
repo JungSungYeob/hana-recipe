@@ -31,7 +31,7 @@ export default function Timer() {
         } else {
           setRemainingTime(timeLeft); // 남은 시간 업데이트
         }
-      }, 50); // 밀리초 단위로 업데이트
+      }, 1); // 밀리초 단위로 업데이트
     }
 
     return () => {
@@ -51,6 +51,13 @@ export default function Timer() {
     }
   };
 
+  const handleReset = () => {
+    if (alarmSound) {
+      alarmSound.pause();
+    }
+    setRemainingTime(0);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSeconds(Number(e.target.value));
   };
@@ -58,25 +65,36 @@ export default function Timer() {
   return (
     <div className='border rounded-md p-4 w-fit'>
       <input
-      className='rounded-md px-2 py-1 max-w-32 w-full'
+        className='rounded-md px-2 py-1 max-w-32 w-full'
         type='number'
         onChange={handleChange}
         placeholder='Seconds'
         disabled={isRunning}
       />
+      {!isRunning ? (
+        <button
+          className='btn text-sm'
+          onClick={handleStart}
+          disabled={isRunning}
+        >
+          Start Timer
+        </button>
+      ) : (
+        <button
+          className='btn bg-red-600 hover:bg-red-900 hover:text-white text-sm'
+          onClick={handleStop}
+        >
+          Stop Timer
+        </button>
+      )}
       <button
-        className='btn text-sm'
-        onClick={handleStart}
+        className='btn bg-blue-600 text-sm hover:bg-blue-900 hover:text-white'
         disabled={isRunning}
+        onClick={handleReset}
       >
-        Start Timer
+        Reset
       </button>
-      <button
-        className='btn bg-red-600 hover:bg-red-900 hover:text-white text-sm'
-        onClick={handleStop}
-      >
-        Stop Timer
-      </button>
+
       <p>
         {Math.floor(remainingTime / 1000)}s {Math.floor(remainingTime % 1000)}ms
       </p>

@@ -95,63 +95,67 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
 
   return (
     <>
-      <div className='border rounded-md text-left p-4'>
+      <div className='border rounded-md text-left p-4 h-full mb-4 overflow-scroll'>
         <h1 className='pb-5'>{recipe?.title}</h1>
-        <div className='pb-5'>
-          <h3>재료</h3>
-          <ul className='ml-5 list-disc'>
-            {recipe?.ingredients.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
+        <div className='inline-flex gap-2 pb-5 justify-center'>
+          {recipe?.tags.map((item, index) => (
+            <small
+              key={index}
+              className='bg-gray-500 p-2 rounded-md hover-floating items-center flex'
+            >{`#${item}`}</small>
+          ))}
         </div>
-        <div className='pb-5'>
-          <h2>조리 과정</h2>
-          <ul className='ml-5'>
-            {recipe?.steps.map((item, index) => (
-              <li key={index} className='flex flex-col'>
-                {`Step ${index + 1}: ${item}`}
-                <div className=''>
-                  <Timer />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h3>수정 기록</h3>
-          <ul>
-            {verList.length < 2 ? (
-              <p className='ml-5'>이전 버젼이 존재하지 않습니다.</p>
-            ) : (
-              verList.map((item, index) => {
-                if (item.id !== recipe?.id)
-                  return (
-                    <li key={item.id} className='p-2'>
-                      <strong>{`버젼 ${index + 1}`}</strong>
-                      <small className='ml-2'>{`(수정일: ${formatDate(new Date(item.date))} )`}</small>
-                      <button
-                        onClick={(e) => handleVersion(e, item.id, recipe)}
-                        className='btn ml-2'
-                      >
-                        이 버전으로 복원
-                      </button>
-                    </li>
-                  );
-              })
-            )}
-          </ul>
-          <div className='inline-flex gap-2 pb-5'>
-            {recipe?.tags.map((item, index) => (
-              <small
-                key={index}
-                className='bg-gray-500 p-2 rounded-md'
-              >{`#${item}`}</small>
-            ))}
+        <div className='grid gap-4 grid-cols-5 grid-rows-2 h-full'>
+          <div className='p-5 border rounded-xl col-span-2 overflow-y-scroll'>
+            <h2>재료</h2>
+            <ul className='ml-5 list-disc'>
+              {recipe?.ingredients.map((item, index) => (
+                <li key={index}>
+                  <h4>{item}</h4>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className='p-5 border rounded-xl col-span-3 row-span-2 overflow-y-scroll'>
+            <h2>조리 과정</h2>
+            <ul className='ml-5'>
+              {recipe?.steps.map((item, index) => (
+                <li key={index} className='flex flex-col mb-2'>
+                  <h4 className='md:max-w-3xl max-w-56 w-full break-words hover-floating mb-2'>{`Step ${index + 1}: ${item}`}</h4>
+                  <div className='mb-4'>
+                    <Timer />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className='p-5 border rounded-xl col-span-2 overflow-y-scroll'>
+            <h2>수정 기록</h2>
+            <ul>
+              {verList.length < 2 ? (
+                <p className='ml-5'>이전 버젼이 존재하지 않습니다.</p>
+              ) : (
+                verList.map((item, index) => {
+                  if (item.id !== recipe?.id)
+                    return (
+                      <li key={item.id} className='p-2'>
+                        <strong>{`버젼 ${index + 1}`}</strong>
+                        <small className='ml-2'>{`(수정일: ${formatDate(new Date(item.date))} )`}</small>
+                        <button
+                          onClick={(e) => handleVersion(e, item.id, recipe)}
+                          className='btn ml-2'
+                        >
+                          이 버전으로 복원
+                        </button>
+                      </li>
+                    );
+                })
+              )}
+            </ul>
           </div>
         </div>
-        <div className='flex gap-4'>
+
+        <div className='flex gap-4 mt-2 justify-center'>
           <Link href={`/recipes/${params.id}/edit-test`}>
             {/* <Link href={`/edit-recipe/${params.id}`}> */}
             <button className='btn'>수정</button>

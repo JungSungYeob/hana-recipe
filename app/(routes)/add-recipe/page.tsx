@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { loadLocalStorage, saveLocalStorage } from '@/lib/storage';
 import { addHandler, deleteHandler } from '@/lib/formLib';
+import AuthInput from '@/components/Input';
 
 export default function AddRecipe() {
   const router = useRouter();
@@ -65,7 +66,13 @@ export default function AddRecipe() {
     <>
       <div className='border rounded-md text-left p-4'>
         <h1>레시피 제목</h1>
-        <input className='inp mb-5' ref={titleRef} />
+        <AuthInput
+          name='title'
+          label='TITLE'
+          classNames=''
+          ref={titleRef}
+        />
+        {/* <input className='inp mb-5' ref={titleRef} /> */}
         <form
           className='pb-5'
           ref={ingredientFormRef}

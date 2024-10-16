@@ -1,5 +1,6 @@
 'use client';
 
+import AuthInput from '@/components/Input';
 import { useRecipeSession } from '@/context/RecipeSessionContext';
 import { Recipe, RecipeList } from '@/types/recipeType';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
@@ -47,6 +48,14 @@ export default function EditRecipe2({ params }: { params: { id: number } }) {
   const ingredientFormRef = useRef<HTMLFormElement>(null);
   const stepFormRef = useRef<HTMLFormElement>(null);
 
+  useEffect(() => {
+    if (tags.length > 10) {
+      alert('해시태그는 10개 이하만 입력 가능합니다.');
+      const newState = tags.filter((_, i) => i !== 10);
+      setTags(newState);
+    }
+  }, [tags]);
+
   const saveHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
@@ -86,14 +95,22 @@ export default function EditRecipe2({ params }: { params: { id: number } }) {
   };
   return (
     <>
-      <div className='border rounded-md text-left p-4'>
+      <div className='border rounded-md text-left p-4 flex flex-col gap-3'>
         <h1>레시피 제목</h1>
-        <input
-          className='mb-5 inp'
+        <AuthInput
+          name='title'
+          label='TITLE'
+          classNames=''
           ref={titleRef}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
+        {/* <input
+          className='mb-5 inp'
+          ref={titleRef}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        /> */}
         <form
           className='pb-5'
           ref={ingredientFormRef}
@@ -102,14 +119,21 @@ export default function EditRecipe2({ params }: { params: { id: number } }) {
           }
         >
           <h3>재료 목록</h3>
-          <input className='inp' ref={ingredientRef} />
-          <button className='btn ml-2' type='submit'>
-            추가
-          </button>
+          <div className='flex items-baseline'>
+            <AuthInput
+              name='ingredients'
+              label='INGREDIENTS'
+              ref={ingredientRef}
+            />
+            {/* <input className='inp' ref={ingredientRef} /> */}
+            <button className='btn ml-2 h-fit' type='submit'>
+              추가
+            </button>
+          </div>
         </form>
         <ul className='list-disc ml-8 pb-5'>
           {ingredients.map((item, index) => (
-            <li key={index} className='mb-2'>
+            <li key={index} className='mb-2 hover-floating w-fit'>
               <div className='flex justify-center w-fit items-center'>
                 {item}
                 <button
@@ -130,15 +154,21 @@ export default function EditRecipe2({ params }: { params: { id: number } }) {
           onSubmit={(e) => addHandler(e, stepFormRef, stepRef, setSteps)}
         >
           <h3>조리 과정</h3>
-          <input className='inp' ref={stepRef} />
-          <button className='btn ml-2' type='submit'>
-            추가
-          </button>
+          <div className='flex items-baseline'>
+            <AuthInput name='steps' label='STEPS' ref={stepRef} />
+            {/* <input className='inp' ref={stepRef} /> */}
+            <button className='btn ml-2' type='submit'>
+              추가
+            </button>
+          </div>
         </form>
         <ul className='ml-5 mb-5'>
           {steps.map((item, index) => (
-            <li key={index} className='flex flex-row mb-2 items-center'>
-              {`Step ${index + 1}: ${item}`}
+            <li
+              key={index}
+              className='flex flex-row mb-2 items-center hover-floating w-fit'
+            >
+              <h4 className='md:max-w-3xl max-w-xs break-words'>{`Step ${index + 1}: ${item}`}</h4>
               <button
                 onClick={(e) => deleteHandler(e, index, steps, setSteps)}
                 className=' ml-1'
@@ -154,15 +184,21 @@ export default function EditRecipe2({ params }: { params: { id: number } }) {
           onSubmit={(e) => addHandler(e, tagFormRef, tagRef, setTags)}
         >
           <h3>태그</h3>
-          <input className='inp' ref={tagRef} />
-          <button className='btn ml-2' type='submit'>
-            추가
-          </button>
+          <div className='flex items-baseline'>
+            <AuthInput name='tags' label='TAGS' ref={tagRef} />
+            {/* <input className='inp' ref={tagRef} /> */}
+            <button className='btn ml-2' type='submit'>
+              추가
+            </button>
+          </div>
         </form>
-        <div className='inline-flex gap-2 mb-5'>
+        <div className='inline-flex gap-2 mb-5 overflow-x-scroll md:max-w-5xl max-w-sm w-full rounded-lg'>
           {tags.map((item, index) => (
-            <div className='flex justify-center items-center' key={index}>
-              <small className=' bg-gray-500 p-2 rounded-md'>{`#${item}`}</small>
+            <div
+              className='flex justify-center items-center hover-floating'
+              key={index}
+            >
+              <small className=' bg-gray-500 p-2 rounded-md flex items-center'>{`#${item}`}</small>
               <button
                 className='ml-1'
                 onClick={(e) => deleteHandler(e, index, tags, setTags)}
