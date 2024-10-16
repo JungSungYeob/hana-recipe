@@ -127,8 +127,3 @@ export const RecipeProvider = ({ children }: PropsWithChildren) => {
 
 export const useRecipeSession = () => useContext(RecipeSessionContext);
 
-function hashPasswd(passwd: string, email: string) {
-  return (
-    crypto.createHash('sha512').update(passwd).digest('base64') + '::' + email
-  );
-}

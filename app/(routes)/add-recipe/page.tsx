@@ -6,7 +6,7 @@ import { Recipe, RecipeList } from '@/types/recipeType';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
 import { TbXboxXFilled } from 'react-icons/tb';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { addHandler, deleteHandler } from '@/lib/formLib';
 import { loadLocalStorage, saveLocalStorage } from '@/lib/storage';
 
@@ -27,6 +27,14 @@ export default function AddRecipe() {
   const ingredientFormRef = useRef<HTMLFormElement>(null);
   const stepFormRef = useRef<HTMLFormElement>(null);
 
+  useEffect(() => {
+    if (tags.length > 10) {
+      alert('해시태그는 10개 이하만 입력 가능합니다.');
+      const newState = tags.filter((_, i) => i !== 10);
+      setTags(newState);
+    }
+  }, [tags]);
+
   const saveHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     if (!titleRef.current?.value) {
@@ -34,7 +42,7 @@ export default function AddRecipe() {
       return;
     }
     if (!steps.length || !ingredients.length || !tags.length) {
-      alert('모든 항목을 1개 이상 추가하세요.')
+      alert('모든 항목을 1개 이상 추가하세요.');
       return;
     }
 
@@ -160,7 +168,10 @@ export default function AddRecipe() {
         </form>
         <div className='inline-flex gap-2 mb-5'>
           {tags.map((item, index) => (
-            <div className='flex justify-center items-center hover-floating' key={index}>
+            <div
+              className='flex justify-center items-center hover-floating'
+              key={index}
+            >
               <small className='bg-gray-500 p-2 rounded-md'>{`#${item}`}</small>
               <button
                 className='ml-1'

@@ -203,7 +203,7 @@ export default function EditRecipe2({ params }: { params: { id: number } }) {
             </button>
           </div>
         </form>
-        <div className='inline-flex gap-2 mb-5'>
+        <div className='flex gap-2 mb-5 md:max-w-3xl max-w-xs w-full'>
           {tags.map((item, index) => (
             <div className='flex justify-center items-center hover-floating' key={index}>
               <small className=' bg-gray-500 p-2 rounded-md'>{`#${item}`}</small>
