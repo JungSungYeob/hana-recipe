@@ -1,41 +1,29 @@
 'use server';
 
 import { AuthError } from 'next-auth';
-import { signIn, signOut } from './auth';
+import { signIn, signOut } from '@/lib/auth';
+
+export { signIn as mySignIn, signOut as mySignOut };
 
 export async function logIn(provider: 'google' | 'github') {
   await signIn(provider, { redirectTo: '/' });
-}
-
-export async function logout() {
-  console.log('logout!!');
-  await signOut();
-}
-
-export async function google() {
-  console.log('logout!!');
-  try {
-    await signIn('google');
-  } catch (error) {
-    if (error instanceof AuthError) {
-      console.log('error>>', error.type, error);
-    }
-    throw error;
-  }
 }
 
 export async function authenticate(
   prevState: string | undefined,
   formData: FormData
 ) {
-  console.log('🚀  formData:', formData);
-  console.log('🚀  prevState:', prevState);
+  const email = formData.get('email');
+  const passwd = formData.get('passwd');
+  if (!email || !passwd) return 'Input the email or password!!';
 
   try {
     await signIn('credentials', formData);
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
+        case 'EmailSignInError':
+          return error.message;
         case 'CredentialsSignin':
           return 'Invalid Credentials!';
         default:

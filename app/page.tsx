@@ -4,7 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useRecipeSession } from '@/context/RecipeSessionContext';
 import { Recipe } from '@/types/recipeType';
 import { Session } from '@/types/userType';
-import { useSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -13,17 +13,34 @@ export default function Home() {
   const { session } = useRecipeSession();
   const [lastSession, setLastSession] = useState<Session | null>(null);
 
+  const reloadSession = async () => {
+    const session = await getSession();
+    console.log('Session reloaded:', session);
+  };
+
+  useEffect(()=>{
+    try{
+      reloadSession();
+    }catch(error){
+      console.log(error)
+    }
+  },[])
+
   useEffect(() => {
     setLastSession(session);
-    const valid = session.recipes.filter((item) =>
-      session.list.some((listitem) => listitem.id === item.id)
-    );
-    const sortValid = valid.sort((a, b) => b.parentId - a.parentId);
-    setStoredData(sortValid);
   }, [session]);
 
+  useEffect(() => {
+    const valid =
+      lastSession?.recipes.filter((item) =>
+        lastSession.list.some((listitem) => listitem.id === item.id)
+      ) || [];
+    const sortValid = valid.sort((a, b) => b.parentId - a.parentId);
+    setStoredData(sortValid);
+  }, [lastSession]);
 
   if (!lastSession?.loginUser) {
+    console.log(lastSession);
     return (
       <div className='grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4'>
         <div className='flex flex-col space-y-3 col-span-1'>
@@ -49,6 +66,8 @@ export default function Home() {
         </div>
       </div>
     );
+  } else if (storedData.length < 1) {
+    return <>데이터 없음</>;
   }
 
   return (

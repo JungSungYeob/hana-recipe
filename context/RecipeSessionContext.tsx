@@ -2,6 +2,7 @@
 
 import { Recipe, RecipeList } from '@/types/recipeType';
 import { LoginUser, Session } from '@/types/userType';
+import crypto from 'crypto';
 import { useSession } from 'next-auth/react';
 import {
   createContext,
@@ -74,19 +75,29 @@ export const RecipeProvider = ({ children }: PropsWithChildren) => {
   const [sessionLoaded, setSessionLoaded] = useState(false);
 
   useEffect(() => {
-    initializeSession();
-  }, [sessionLoaded]);
+    const reset = () => {
+      if (sessionData) {
+        const newSession: LoginUser = {
+          email: sessionData.user?.email || '',
+          name: sessionData.user?.name || '',
+          image: sessionData.user?.image || null,
+        };
+        dispatch({ type: 'initializeSession', payload: newSession });
+      }
+    };
+    reset();
+  }, [sessionLoaded, sessionData]);
 
   //useSession이 최종적으로 이루어졌는지 확인
   useEffect(() => {
-    if (session) {
+    if (sessionData) {
       const timeoutId = setTimeout(() => {
         setSessionLoaded(true);
       }, 500);
 
       return () => clearTimeout(timeoutId); // session 변경 중 타이머를 초기화
     }
-  }, [session]);
+  }, [sessionData]);
 
   const initializeSession = () => {
     if (sessionData) {
@@ -115,3 +126,9 @@ export const RecipeProvider = ({ children }: PropsWithChildren) => {
 };
 
 export const useRecipeSession = () => useContext(RecipeSessionContext);
+
+function hashPasswd(passwd: string, email: string) {
+  return (
+    crypto.createHash('sha512').update(passwd).digest('base64') + '::' + email
+  );
+}
