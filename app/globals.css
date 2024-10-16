@@ -95,12 +95,26 @@
   }
 
   .inp {
-    @apply bg-gray-400 p-4 rounded-md text-black max-w-5xl w-full ;
+    @apply bg-gray-400 p-4 rounded-md text-black max-w-5xl w-full;
   }
 
   .root {
     @apply max-w-7xl w-full text-center;
   }
+
+  .input-box {
+    @apply relative mt-8 h-12 w-1/2 min-w-96 border-b-2 border-b-white;
+  }
+  .input-icon {
+    @apply absolute right-2 top-4 h-6 w-6;
+  }
+  .input-box input {
+    @apply h-full w-full border-none bg-transparent px-2 outline-none;
+  }
+  .input-box label {
+    @apply pointer-events-none absolute left-1 top-1/2 -translate-y-1/2 text-sm font-medium duration-500;
+  }
+  
 }
 
 @layer utilities {
@@ -164,6 +178,10 @@
 
   html::-webkit-scrollbar {
     display: none;
+  }
+
+  input[type="password"] {
+    font-family: initial; /* 기본 폰트로 설정 */
   }
 }
 

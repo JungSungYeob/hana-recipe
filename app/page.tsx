@@ -4,11 +4,15 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useRecipeSession } from '@/context/RecipeSessionContext';
 import { Recipe } from '@/types/recipeType';
 import { Session } from '@/types/userType';
-import { getSession, useSession } from 'next-auth/react';
+import { getSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
+  /** Error 테스트 */
+  // if (process.env.NODE_ENV === 'development') {
+  //   throw new Error('Test Error');
+  // }
   const [storedData, setStoredData] = useState<Recipe[]>([]);
   const { session } = useRecipeSession();
   const [lastSession, setLastSession] = useState<Session | null>(null);
@@ -18,13 +22,13 @@ export default function Home() {
     console.log('Session reloaded:', session);
   };
 
-  useEffect(()=>{
-    try{
+  useEffect(() => {
+    try {
       reloadSession();
-    }catch(error){
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
-  },[])
+  }, []);
 
   useEffect(() => {
     setLastSession(session);
