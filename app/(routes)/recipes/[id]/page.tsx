@@ -95,7 +95,7 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
 
   return (
     <>
-      <div className='border rounded-md text-left p-4 h-full mb-4 overflow-scroll'>
+      <div className='border rounded-md text-left p-4 h-full overflow-scroll'>
         <h1 className='pb-5'>{recipe?.title}</h1>
         <div className='inline-flex gap-2 pb-5 justify-center'>
           {recipe?.tags.map((item, index) => (
@@ -105,7 +105,7 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
             >{`#${item}`}</small>
           ))}
         </div>
-        <div className='grid gap-4 grid-cols-5 grid-rows-2 h-full'>
+        <div className='grid gap-4 grid-cols-5 grid-rows-2 h-4/5'>
           <div className='p-5 border rounded-xl col-span-2 overflow-y-scroll'>
             <h2>재료</h2>
             <ul className='ml-5 list-disc'>

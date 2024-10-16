@@ -5,7 +5,6 @@ import { useRecipeSession } from '@/context/RecipeSessionContext';
 import { Recipe } from '@/types/recipeType';
 import { Session } from '@/types/userType';
 import { getSession } from 'next-auth/react';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
@@ -79,7 +78,7 @@ export default function Home() {
       <div>
         <div className='grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4'>
           {storedData.map((recipe) => (
-            <Link
+            <a
               key={recipe.id}
               href={`recipes/${recipe.id}`}
               className='col-span-1 recipe-item flex'
@@ -88,7 +87,7 @@ export default function Home() {
                 <h3 className='pt-10'>{recipe.title}</h3>
                 <div className='flex flex-wrap gap-2 justify-center'>
                   {recipe.tags.slice(0, 5).map((tag, index) => (
-                    <small key={index} className='bg-gray-500 p-2 rounded-md'>
+                    <small key={index} className='bg-gray-500 p-2 rounded-xl hover-floating items-center flex'>
                       {`#${tag}`}
                     </small>
                   ))}
@@ -99,7 +98,7 @@ export default function Home() {
                   )}
                 </div>
               </div>
-            </Link>
+            </a>
           ))}
         </div>
       </div>

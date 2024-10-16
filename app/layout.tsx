@@ -31,7 +31,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <RecipeProvider>
             <Header />
-            <main className='root pt-20 z-0 relative px-4 h-full'>{children}</main>
+            <main className='root pt-20 z-0 relative p-4 h-full'>{children}</main>
           </RecipeProvider>
         </SessionProvider>
       </body>

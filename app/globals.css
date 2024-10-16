@@ -187,6 +187,13 @@
   input[type="password"] {
     font-family: initial; /* 기본 폰트로 설정 */
   }
+
+  .my-background {
+    background-image: url('/images/bg-login.png'); /* public 폴더 경로 기준으로 절대 경로 사용 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 }
 
 @layer base {

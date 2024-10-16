@@ -58,6 +58,14 @@ export default function EditRecipe2({ params }: { params: { id: number } }) {
 
   const saveHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
+    if (!titleRef.current?.value) {
+      alert('제목을 입력하세요.');
+      return;
+    }
+    if (!steps.length || !ingredients.length || !tags.length) {
+      alert('모든 항목을 1개 이상 추가하세요.');
+      return;
+    }
 
     const storedData = loadLocalStorage<Recipe[]>('Recipes') || [];
     const storedList = loadLocalStorage<RecipeList[]>('RecipesList') || [];
@@ -95,16 +103,19 @@ export default function EditRecipe2({ params }: { params: { id: number } }) {
   };
   return (
     <>
-      <div className='border rounded-md text-left p-4 flex flex-col gap-3'>
+      <div className='border rounded-xl text-left p-4 flex flex-col gap-3 h-full overflow-y-scroll'>
         <h1>레시피 제목</h1>
-        <AuthInput
-          name='title'
-          label='TITLE'
-          classNames=''
-          ref={titleRef}
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+        <div className='flex items-baseline'>
+          <AuthInput
+            name='title'
+            label='TITLE'
+            classNames=''
+            ref={titleRef}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+
         {/* <input
           className='mb-5 inp'
           ref={titleRef}
@@ -192,13 +203,10 @@ export default function EditRecipe2({ params }: { params: { id: number } }) {
             </button>
           </div>
         </form>
-        <div className='inline-flex gap-2 mb-5 overflow-x-scroll md:max-w-5xl max-w-sm w-full rounded-lg'>
+        <div className='inline-flex gap-2 mb-5'>
           {tags.map((item, index) => (
-            <div
-              className='flex justify-center items-center hover-floating'
-              key={index}
-            >
-              <small className=' bg-gray-500 p-2 rounded-md flex items-center'>{`#${item}`}</small>
+            <div className='flex justify-center items-center hover-floating' key={index}>
+              <small className=' bg-gray-500 p-2 rounded-md'>{`#${item}`}</small>
               <button
                 className='ml-1'
                 onClick={(e) => deleteHandler(e, index, tags, setTags)}

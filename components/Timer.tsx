@@ -63,7 +63,7 @@ export default function Timer() {
   };
 
   return (
-    <div className='border rounded-md p-4 w-fit'>
+    <div className='border rounded-xl p-4 w-fit'>
       <input
         className='rounded-md px-2 py-1 max-w-32 w-full'
         type='number'
