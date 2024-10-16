@@ -80,7 +80,7 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
     initializeSession();
     router.replace(`/recipes/${id}`);
   };
-  
+
   if (!valid) {
     return (
       <div className='flex flex-col space-y-3'>
@@ -152,7 +152,8 @@ export default function RecipeDetail({ params }: { params: { id: number } }) {
           </div>
         </div>
         <div className='flex gap-4'>
-          <Link href={`/edit-recipe/${params.id}`}>
+          <Link href={`/recipes/${params.id}/edit-test`}>
+            {/* <Link href={`/edit-recipe/${params.id}`}> */}
             <button className='btn'>수정</button>
           </Link>
           <button
